@@ -7,5 +7,5 @@ public interface Invoice {
     void procAmtInfo(BigDecimal preTaxTotalAmt);
 
     void setInvoiceInfo(InvoiceInfo invoiceInfo);
-    void printInvoice();
+    String printInvoice();
 }

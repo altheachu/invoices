@@ -39,14 +39,20 @@ public class UsInvoice implements Invoice{
     }
 
     @Override
-    public void printInvoice() {
-        System.out.println(String.format("%s invoice", "US"));
-        System.out.println("======");
-        System.out.println("items: ");
+    public String printInvoice() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("US invoice\n")
+                .append("======\n")
+                .append("items: \n");
+
         for(String item : items){
-            System.out.println(item);
+            sb.append(item + "\n");
         }
-        System.out.println("preTaxAmt: " + preTaxAmt);
-        System.out.println("stateCode: " + stateCode);
+
+        sb.append(String.format("preTaxAmt: %s \n", preTaxAmt.setScale(2)))
+                .append(String.format("stateCode: %s \n", stateCode));
+
+        return sb.toString();
+
     }
 }

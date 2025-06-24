@@ -32,13 +32,15 @@ public class JpInvoice implements Invoice{
     }
 
     @Override
-    public void printInvoice() {
-        System.out.println(String.format("%s invoice", "Japan"));
-        System.out.println("======");
-        System.out.println("supplierNo: " + supplierNo);
-        System.out.println("preTaxAmt: " + preTaxAmt);
-        System.out.println("taxRate: " + taxRate);
-        System.out.println("taxAmt: " + taxAmt);
-        System.out.println("taxFree: " + taxFreeFlag);
+    public String printInvoice() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(String.format("%s invoice", "Japan") + "\n")
+                .append("======" + "\n")
+                .append(String.format("supplierNo: %s \n", supplierNo))
+                .append(String.format("preTaxAmt: %s \n", preTaxAmt.setScale(2)))
+                .append(String.format("taxRate: %s \n", taxRate.setScale(2)))
+                .append(String.format("taxAmt: %s \n", taxAmt.setScale(2)))
+                .append(String.format("taxFree: %s \n", taxFreeFlag));
+        return sb.toString();
     }
 }

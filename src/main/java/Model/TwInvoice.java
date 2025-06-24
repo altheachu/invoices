@@ -33,14 +33,16 @@ public class TwInvoice implements Invoice{
     }
 
     @Override
-    public void printInvoice(){
-        System.out.println(String.format("%s invoice", "Taiwan"));
-        System.out.println("======");
-        System.out.println("commonNo: " + commonNo);
-        System.out.println("invoiceNo: " + invoiceNo);
-        System.out.println("invoiceType: " + invoiceType);
-        System.out.println("taxRate: " + taxRate);
-        System.out.println("taxAmt: " + taxAmt);
-        System.out.println("taxIncludedAmt: " + taxIncludedAmt);
+    public String printInvoice(){
+        StringBuilder sb = new StringBuilder();
+        sb.append(String.format("%s invoice", "Taiwan") + "\n")
+                .append("======" + "\n")
+                .append(String.format("commonNo: %s \n", commonNo))
+                .append(String.format("invoiceNo: %s \n", invoiceNo))
+                .append(String.format("invoiceType: %s \n", invoiceType))
+                .append(String.format("taxRate: %s \n", taxRate.setScale(2)))
+                .append(String.format("taxAmt: %s \n", taxAmt.setScale(2)))
+                .append(String.format("taxIncludedAmt: %s \n", taxIncludedAmt.setScale(2)));
+        return sb.toString();
     }
 }

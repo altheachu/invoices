@@ -18,8 +18,8 @@ public class InvoicePrinter {
         invoice.setInvoiceInfo(invoiceInfo);
     }
 
-    public void printInvoice(){
-        invoice.printInvoice();
+    public String printInvoice(){
+        return invoice.printInvoice();
     }
 
 }
