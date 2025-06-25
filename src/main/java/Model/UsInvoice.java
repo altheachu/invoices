@@ -1,5 +1,7 @@
 package Model;
 
+import utils.ErrorCode;
+import utils.InvoiceFormat;
 import utils.NationCode;
 import utils.StateTaxCodeRate;
 
@@ -40,19 +42,29 @@ public class UsInvoice implements Invoice{
 
     @Override
     public String printInvoice() {
+
+        if(items==null||items.size()==0){
+            throw new IllegalArgumentException(ErrorCode.E02.getErrorDescription());
+        }
+
         StringBuilder sb = new StringBuilder();
-        sb.append("US invoice\n")
-                .append("======\n")
-                .append("items: \n");
+        sb.append(InvoiceFormat.invoiceFormatUs[0] + "\n")
+                .append(InvoiceFormat.invoiceFormatUs[1] + "\n")
+                .append(String.format("%s: \n", InvoiceFormat.invoiceFormatUs[2]));
 
         for(String item : items){
             sb.append(item + "\n");
         }
 
-        sb.append(String.format("preTaxAmt: %s \n", preTaxAmt.setScale(2)))
-                .append(String.format("stateCode: %s \n", stateCode));
+        sb.append(String.format("%s: %s \n", InvoiceFormat.invoiceFormatUs[3], preTaxAmt.setScale(2)))
+                .append(String.format("%s: %s \n", InvoiceFormat.invoiceFormatUs[4], stateCode));
 
         return sb.toString();
 
+    }
+
+    @Override
+    public BigDecimal getTaxRate() {
+        return taxRate;
     }
 }

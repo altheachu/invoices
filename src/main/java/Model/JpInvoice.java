@@ -1,5 +1,7 @@
 package Model;
 
+import utils.ErrorCode;
+import utils.InvoiceFormat;
 import utils.NationCode;
 
 import java.math.BigDecimal;
@@ -16,7 +18,7 @@ public class JpInvoice implements Invoice{
     private String supplierNo;
 
     public JpInvoice(){
-        this.taxRate = BigDecimal.valueOf(0.1);
+        this.taxRate = BigDecimal.valueOf(0.10);
     }
 
 
@@ -33,14 +35,22 @@ public class JpInvoice implements Invoice{
 
     @Override
     public String printInvoice() {
+        if (supplierNo==null || taxFreeFlag==null){
+            throw new IllegalArgumentException(ErrorCode.E02.getErrorDescription());
+        }
         StringBuilder sb = new StringBuilder();
-        sb.append(String.format("%s invoice", "Japan") + "\n")
-                .append("======" + "\n")
-                .append(String.format("supplierNo: %s \n", supplierNo))
-                .append(String.format("preTaxAmt: %s \n", preTaxAmt.setScale(2)))
-                .append(String.format("taxRate: %s \n", taxRate.setScale(2)))
-                .append(String.format("taxAmt: %s \n", taxAmt.setScale(2)))
-                .append(String.format("taxFree: %s \n", taxFreeFlag));
+        sb.append(InvoiceFormat.invoiceFormatJp[0] + "\n")
+                .append(InvoiceFormat.invoiceFormatJp[1] + "\n")
+                .append(String.format("%s: %s \n", InvoiceFormat.invoiceFormatJp[2], supplierNo))
+                .append(String.format("%s: %s \n", InvoiceFormat.invoiceFormatJp[3], preTaxAmt.setScale(2)))
+                .append(String.format("%s: %s \n", InvoiceFormat.invoiceFormatJp[4], taxRate.setScale(2)))
+                .append(String.format("%s: %s \n", InvoiceFormat.invoiceFormatJp[5], taxAmt.setScale(2)))
+                .append(String.format("%s: %s \n", InvoiceFormat.invoiceFormatJp[6], taxFreeFlag));
         return sb.toString();
+    }
+
+    @Override
+    public BigDecimal getTaxRate() {
+        return taxRate;
     }
 }

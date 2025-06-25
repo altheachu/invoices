@@ -8,4 +8,5 @@ public interface Invoice {
 
     void setInvoiceInfo(InvoiceInfo invoiceInfo);
     String printInvoice();
+    BigDecimal getTaxRate();
 }

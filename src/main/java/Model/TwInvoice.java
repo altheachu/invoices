@@ -1,5 +1,7 @@
 package Model;
 
+import utils.ErrorCode;
+import utils.InvoiceFormat;
 import utils.NationCode;
 
 import java.math.BigDecimal;
@@ -34,15 +36,23 @@ public class TwInvoice implements Invoice{
 
     @Override
     public String printInvoice(){
+        if (commonNo==null || invoiceNo==null || invoiceType==null){
+            throw new IllegalArgumentException(ErrorCode.E02.getErrorDescription());
+        }
         StringBuilder sb = new StringBuilder();
-        sb.append(String.format("%s invoice", "Taiwan") + "\n")
-                .append("======" + "\n")
-                .append(String.format("commonNo: %s \n", commonNo))
-                .append(String.format("invoiceNo: %s \n", invoiceNo))
-                .append(String.format("invoiceType: %s \n", invoiceType))
-                .append(String.format("taxRate: %s \n", taxRate.setScale(2)))
-                .append(String.format("taxAmt: %s \n", taxAmt.setScale(2)))
-                .append(String.format("taxIncludedAmt: %s \n", taxIncludedAmt.setScale(2)));
+        sb.append(InvoiceFormat.invoiceFormatTw[0] + "\n")
+                .append(InvoiceFormat.invoiceFormatTw[1] + "\n")
+                .append(String.format("%s: %s \n", InvoiceFormat.invoiceFormatTw[2] ,commonNo))
+                .append(String.format("%s: %s \n", InvoiceFormat.invoiceFormatTw[3] ,invoiceNo))
+                .append(String.format("%s: %s \n",InvoiceFormat.invoiceFormatTw[4] ,invoiceType))
+                .append(String.format("%s: %s \n", InvoiceFormat.invoiceFormatTw[5] ,taxRate.setScale(2)))
+                .append(String.format("%s: %s \n", InvoiceFormat.invoiceFormatTw[6], taxAmt.setScale(2)))
+                .append(String.format("%s: %s \n", InvoiceFormat.invoiceFormatTw[7],taxIncludedAmt.setScale(2)));
         return sb.toString();
+    }
+
+    @Override
+    public BigDecimal getTaxRate() {
+        return taxRate;
     }
 }

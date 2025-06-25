@@ -1,5 +1,5 @@
 package utils;
 
 public enum NationCode {
-    TW, JP, US
+    TW, JP, US, UK
 }

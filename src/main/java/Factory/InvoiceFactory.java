@@ -5,6 +5,7 @@ import Provider.InvoiceProvider;
 import Provider.JpInvoiceProvider;
 import Provider.TwInvoiceProvider;
 import Provider.UsInvoiceProvider;
+import utils.ErrorCode;
 import utils.NationCode;
 
 import java.util.ArrayList;
@@ -28,6 +29,9 @@ public class InvoiceFactory {
 
     public Invoice createInvoice(NationCode nationCode, String stateCode){
         InvoiceProvider provider = providerMap.get(nationCode);
+        if(provider==null){
+            throw new IllegalArgumentException(ErrorCode.E01.getErrorDescription());
+        }
         return provider.createInvoice(stateCode);
     }
 
