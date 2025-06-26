@@ -2,21 +2,16 @@ package Model;
 
 import utils.ErrorCode;
 import utils.InvoiceFormat;
-import utils.NationCode;
-
 import java.math.BigDecimal;
-import java.util.List;
-import java.util.Map;
 
 public class TwInvoice implements Invoice{
 
     private BigDecimal taxRate;
     private BigDecimal taxIncludedAmt;
     private BigDecimal taxAmt;
-
-    public String commonNo;
-    public String invoiceNo;
-    public String invoiceType;
+    private String commonNo;
+    private String invoiceNo;
+    private String invoiceType;
 
     public TwInvoice(){
         this.taxRate = BigDecimal.valueOf(0.05);
@@ -24,11 +19,19 @@ public class TwInvoice implements Invoice{
 
     @Override
     public void procAmtInfo(BigDecimal preTaxTotalAmt) {
+        if(preTaxTotalAmt==null || preTaxTotalAmt.intValue()==0){
+            String errMsg = String.format("%s %s", InvoiceFormat.invoiceFormatTw[0],ErrorCode.E04.getErrorDescription());
+            throw new IllegalArgumentException(errMsg);
+        }
         taxAmt = preTaxTotalAmt.multiply(taxRate);
         taxIncludedAmt = preTaxTotalAmt.multiply(taxRate.add(BigDecimal.valueOf(1)));
     }
     @Override
     public void setInvoiceInfo(InvoiceInfo invoiceInfo){
+        if(invoiceInfo==null){
+            String errMsg = String.format("%s %s", InvoiceFormat.invoiceFormatTw[0],ErrorCode.E02.getErrorDescription());
+            throw new IllegalArgumentException(errMsg);
+        }
         commonNo = invoiceInfo.getCommonNo();
         invoiceNo = invoiceInfo.getInvoiceNo();
         invoiceType = invoiceInfo.getInvoiceType();
@@ -55,4 +58,10 @@ public class TwInvoice implements Invoice{
     public BigDecimal getTaxRate() {
         return taxRate;
     }
+
+    @Override
+    public String getStateCode() {
+        return null;
+    }
+
 }

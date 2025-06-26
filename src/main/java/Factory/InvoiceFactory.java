@@ -32,7 +32,11 @@ public class InvoiceFactory {
         if(provider==null){
             throw new IllegalArgumentException(ErrorCode.E01.getErrorDescription());
         }
-        return provider.createInvoice(stateCode);
+        Invoice invoice = provider.createInvoice(stateCode);
+        if(provider.getInvoiceType().equals(NationCode.US) && invoice.getStateCode()==null){
+            throw new IllegalArgumentException(ErrorCode.E03.getErrorDescription());
+        }
+        return invoice;
     }
 
 }

@@ -32,11 +32,19 @@ public class UsInvoice implements Invoice{
 
     @Override
     public void procAmtInfo(BigDecimal preTaxTotalAmt) {
+        if(preTaxTotalAmt==null || preTaxTotalAmt.intValue()==0){
+            String errMsg = String.format("%s %s", InvoiceFormat.invoiceFormatUs[0],ErrorCode.E04.getErrorDescription());
+            throw new IllegalArgumentException(errMsg);
+        }
         preTaxAmt = preTaxTotalAmt;
         taxAmt = preTaxTotalAmt.multiply(taxRate);
     }
     @Override
     public void setInvoiceInfo(InvoiceInfo invoiceInfo){
+        if(invoiceInfo==null){
+            String errMsg = String.format("%s %s", InvoiceFormat.invoiceFormatUs[0],ErrorCode.E02.getErrorDescription());
+            throw new IllegalArgumentException(errMsg);
+        }
         items = invoiceInfo.getItems();
     }
 
@@ -66,5 +74,10 @@ public class UsInvoice implements Invoice{
     @Override
     public BigDecimal getTaxRate() {
         return taxRate;
+    }
+
+    @Override
+    public String getStateCode() {
+        return stateCode;
     }
 }

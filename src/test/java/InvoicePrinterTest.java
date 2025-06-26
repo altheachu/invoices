@@ -21,6 +21,8 @@ public class InvoicePrinterTest {
     private final String supplierNo = "1234";
     private final String taxFreeFlag = "Y";
     private final BigDecimal preTaxAmt = BigDecimal.valueOf(500);
+    private final BigDecimal zeroPreTaxAmt = BigDecimal.valueOf(0);
+    private final String invalidStateCode = "00";
 
     public InvoicePrinter invoicePrinter;
     public InvoiceInfo invoiceInfo;
@@ -49,6 +51,15 @@ public class InvoicePrinterTest {
     }
 
     @Test
+    public void proc_invoice_basic_info_fail_path_us(){
+        try {
+            invoicePrinter.procInvoiceBasicInfo(NationCode.US, invalidStateCode);
+        } catch (Exception e){
+            Assert.assertEquals(ErrorCode.E03.getErrorDescription(),e.getMessage());
+        }
+    }
+
+    @Test
     public void set_other_invoice_info_happy_path() {
 
         String[] itemArray = {"蘋果","banana","みかん"};
@@ -67,6 +78,30 @@ public class InvoicePrinterTest {
         Assert.assertEquals(supplierNo, invoiceInfo.getSupplierNo());
         Assert.assertEquals(taxFreeFlag, invoiceInfo.getTaxFreeFlag());
         Assert.assertArrayEquals(itemArray, invoiceInfo.getItems().toArray(new String[itemArray.length]));
+    }
+
+    @Test
+    public void set_other_invoice_info_fail_path() {
+
+        NationCode[] nationCodes = {NationCode.TW, NationCode.JP, NationCode.US};
+
+        for(NationCode nationCode : nationCodes){
+            String stateCode = null;
+            if(nationCode.equals(NationCode.US)){
+                stateCode = StateTaxCodeRate.NY.getStateCode();
+            }
+            invoicePrinter.procInvoiceBasicInfo(nationCode, stateCode);
+            invoicePrinter.invoice.procAmtInfo(preTaxAmt);
+            try {
+                invoicePrinter.setOtherInvoiceInfo(null);
+            } catch (Exception e){
+                boolean isKeyErrMsgIncluded = e.getMessage().contains(ErrorCode.E02.getErrorDescription());
+                Assert.assertTrue(isKeyErrMsgIncluded);
+                if(!isKeyErrMsgIncluded){
+                    Assert.assertEquals("log", e.getMessage());
+                }
+            }
+        }
     }
 
     @Test
@@ -217,8 +252,6 @@ public class InvoicePrinterTest {
         Assert.assertEquals(StateTaxCodeRate.MA.getTaxRate(), invoicePrinter.invoice.getTaxRate());
     }
 
-    // TODO us state code
-
     @Test
     public void print_invoice_us_fail_path_insufficient_info(){
 
@@ -245,5 +278,38 @@ public class InvoicePrinterTest {
         }
     }
 
-    // TODO AMT
+    @Test
+    public void print_invoice_fail_path_invalid_amt(){
+
+        NationCode[] nationCodes = {NationCode.TW, NationCode.JP, NationCode.US};
+
+        for(NationCode nationCode : nationCodes){
+
+            String stateCode = null;
+
+            if(nationCode.equals(NationCode.US)){
+                stateCode = StateTaxCodeRate.NY.getStateCode();
+            }
+
+            invoicePrinter.procInvoiceBasicInfo(nationCode, stateCode);
+
+            BigDecimal[] invalidPreTaxAmts = {null, zeroPreTaxAmt};
+
+            for (BigDecimal invalidPreTaxAmt : invalidPreTaxAmts){
+                invalidPreTaxAmtCheckHelper(invoicePrinter.invoice, invalidPreTaxAmt);
+            }
+        }
+    }
+
+    private void invalidPreTaxAmtCheckHelper(Invoice invoice, BigDecimal preTaxAmt){
+        try {
+            invoice.procAmtInfo(preTaxAmt);
+        } catch (Exception e){
+            boolean isKeyErrMsgIncluded = e.getMessage().contains(ErrorCode.E04.getErrorDescription());
+            Assert.assertTrue(isKeyErrMsgIncluded);
+            if(!isKeyErrMsgIncluded){
+                Assert.assertEquals("log", e.getMessage());
+            }
+        }
+    }
 }
